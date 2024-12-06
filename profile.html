@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CLI Webpage</title>
+    <style>
+        body {
+            background-color: black;
+            color: lightgreen;
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: lightgreen;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #console {
+            width: 90%;
+            max-width: 800px;
+            border: 2px solid lightgreen;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px lightgreen;
+            background: radial-gradient(circle at top left, #002b00, #000000);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 5px lightgreen;
+        }
+
+        .contact-button {
+            display: inline-block;
+            background-color: lightgreen;
+            color: black;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .contact-button:hover {
+            background-color: white;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .logo {
+            display: block;
+            margin: 20px auto;
+            width: 100px;
+            height: auto;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px lightgreen);
+            }
+            to {
+                filter: drop-shadow(0 0 20px lightgreen);
+            }
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid lightgreen;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+            margin-top: 10px;
+        }
+
+        #runningTime {
+            font-weight: bold;
+        }
+
+        #deviceInfo, #locationInfo {
+            color: lightgreen;
+        }
+
+        #footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: gray;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>CLI Web Terminal</h1>
+    <img src="logo.png" alt="Your Logo" class="logo">
+
+    <div id="console">
+        <div class="section" id="nameSkills">
+            <span class="section-title">Name:</span> <span id="userName">Your Name</span><br>
+            <span class="section-title">Skills:</span> <span id="userSkills">Web Developer, Programmer, Designer</span>
+        </div>
+
+        <div class="section" id="contact">
+            <span class="section-title">Contact:</span> 
+            <a href="https://t.me/yourtelegram" target="_blank" class="contact-button">Message me on Telegram</a>
+        </div>
+
+        <div class="section" id="timezone">
+            <span class="section-title">Your Time:</span> <span id="userTime">Loading...</span>
+        </div>
+
+        <div class="section" id="device">
+            <span class="section-title">Device Information:</span>
+            <pre id="deviceInfo">Loading device information...</pre>
+        </div>
+
+        <div class="section" id="location">
+            <span class="section-title">Location:</span>
+            <pre id="locationInfo">Fetching location...</pre>
+        </div>
+    </div>
+
+    <div id="footer">Made with ❤️ for geeks by Your Name</div>
+
+    <script>
+        // Running time logic
+        const runningTimeElement = document.getElementById("runningTime");
+        const startTime = new Date();
+
+        function updateRunningTime() {
+            const now = new Date();
+            const elapsed = new Date(now - startTime);
+            const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+            const minutes = String(elapsed.getMinutes()).padStart(2, '0');
+            const seconds = String(elapsed.getSeconds()).padStart(2, '0');
+            const milliseconds = String(elapsed.getMilliseconds()).padStart(3, '0');
+            runningTimeElement.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+        setInterval(updateRunningTime, 10);
+
+        // Display user's current time and time zone
+        const userTimeElement = document.getElementById("userTime");
+        function updateUserTime() {
+            const now = new Date();
+            const options = { timeZoneName: "short" };
+            const formattedTime = now.toLocaleTimeString(undefined, options);
+            userTimeElement.textContent = formattedTime;
+        }
+        setInterval(updateUserTime, 1000);
+
+        // Device information
+        const deviceInfoElement = document.getElementById("deviceInfo");
+        const userAgent = navigator.userAgent;
+        const platform = navigator.platform;
+        const language = navigator.language;
+        const deviceInfo = `
+User Agent: ${userAgent}
+Platform: ${platform}
+Language: ${language}
+`;
+        deviceInfoElement.textContent = deviceInfo;
+
+        // Location information
+        const locationInfoElement = document.getElementById("locationInfo");
+        async function fetchLocation() {
+            try {
+                const response = await fetch("https://ipapi.co/json/");
+                const locationData = await response.json();
+                const locationInfo = `
+City: ${locationData.city}
+Region: ${locationData.region}
+Country: ${locationData.country_name}
+IP Address: ${locationData.ip}
+`;
+                locationInfoElement.textContent = locationInfo;
+            } catch (error) {
+                locationInfoElement.textContent = "Failed to fetch location.";
+            }
+        }
+        fetchLocation();
+
+
+    </script>
+</body>
+</html>
